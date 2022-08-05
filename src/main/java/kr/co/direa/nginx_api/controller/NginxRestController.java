@@ -45,9 +45,9 @@ public class NginxRestController {
         return nginxService.status();
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return nginxService.getStatusCmd();
-    }
+//    @GetMapping("/test")
+//    public String test() {
+//        return nginxService.getStatusCmd();
+//    }
 
 }

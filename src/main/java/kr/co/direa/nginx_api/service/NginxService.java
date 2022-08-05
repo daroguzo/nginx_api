@@ -85,6 +85,7 @@ public class NginxService {
 
         String rawStatus = getStatus(cmd);
 
+        // STATUS EXAMPLE
 //        String rawStatus = "Active connections: 541 \n" +
 //                "server accepts handled requests\n" +
 //                " 331 331 301 \n" +
@@ -149,17 +150,19 @@ public class NginxService {
         return sb.toString();
     }
 
+    // config file 가져오기
     public String getConfigFile() {
         StringBuilder sb = new StringBuilder();
 
         try {
             File file = new File(confPath);
+//            File file = new File("C:\\Users\\MSI\\Desktop\\nginx\\nginx_config.txt");
             FileReader fileReader = new FileReader(file);
             BufferedReader bufReader = new BufferedReader(fileReader);
 
             String line = "";
             while ((line = bufReader.readLine()) != null) {
-                sb.append(line);
+                sb.append(line).append("\n");
             }
             bufReader.close();
 
@@ -167,6 +170,23 @@ public class NginxService {
             e.printStackTrace();
         }
         return sb.toString();
+    }
+
+    public boolean reviseConfigFile(String overwrittenConfig) {
+        FileWriter fw = null;
+
+        try {
+            File file = new File(confPath);
+//            File file = new File("C:\\Users\\MSI\\Desktop\\nginx\\nginx_config.txt");
+            fw = new FileWriter(file, false);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(overwrittenConfig);
+            bw.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     public static void main(String[] args) {

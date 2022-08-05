@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Nginx Configuration 수정</title>
+    <style>
+        * {
+            font-size: 16px;
+            font-family: Consolas, sans-serif;
+        }
+    </style>
+</head>
+<body>
+<form action="/nginx/config" method="post">
+    <p>
+        <textarea cols="50" rows="10" th:text="${configString}" name="configString" required></textarea>
+    </p>
+    <p>
+        <input type="submit" value="Submit">
+    </p>
+
+    <p th:if="${isRun}">
+        <script type="text/javascript">
+
+            alert("config 파일 수정 성공!");
+
+        </script>
+    </p>
+</form>
+</body>
+</html>
