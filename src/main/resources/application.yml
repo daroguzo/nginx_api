@@ -1,0 +1,7 @@
+server:
+  port: 8888
+
+nginx:
+  service_path: $CRUZ_ROOT/nginx/local/nginx/sbin/nginx
+  status_cmd: curl localhost:8880/nginx_status
+  conf_path: $CRUZ_ROOT/nginx/local/nginx/conf/nginx.conf
