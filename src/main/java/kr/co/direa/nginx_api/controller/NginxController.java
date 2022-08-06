@@ -1,7 +1,6 @@
 package kr.co.direa.nginx_api.controller;
 
 import kr.co.direa.nginx_api.service.NginxService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

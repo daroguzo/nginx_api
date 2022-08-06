@@ -14,13 +14,15 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class NginxService {
 
-    @Value("${nginx.service_path}")
+    private final LogService logService;
+
+    @Value("${nginx.path.service}")
     private String nginxPath;
 
-    @Value("${nginx.status_cmd}")
+    @Value("${nginx.cmd.status}")
     private String statusCmd;
 
-    @Value("${nginx.conf_path}")
+    @Value("${nginx.path.conf}")
     private String confPath;
 
     // nginx 기동 커맨드 실행
@@ -83,7 +85,7 @@ public class NginxService {
                 statusCmd
         };
 
-        String rawStatus = getStatus(cmd);
+        String rawStatus = getStatusCmdToString(cmd);
 
         // STATUS EXAMPLE
 //        String rawStatus = "Active connections: 541 \n" +
@@ -97,7 +99,7 @@ public class NginxService {
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
-        if (statusNumbers.length != 6) {
+        if (statusNumbers.length == 6) {
             return MonitoringStatus.builder()
                     .isOk(false)
                     .date(date)
@@ -105,7 +107,7 @@ public class NginxService {
                     .build();
         }
 
-        return MonitoringStatus.builder()
+        MonitoringStatus result = MonitoringStatus.builder()
                 .isOk(true)
                 .date(date)
                 .time(time)
@@ -117,6 +119,10 @@ public class NginxService {
                 .writing(Long.parseLong(statusNumbers[5]))
                 .waiting(Long.parseLong(statusNumbers[6]))
                 .build();
+
+        // 로그 파일로 쓰기
+        logService.writeLog(result.toString());
+        return result;
     }
 
     public void execCommand(String[] cmd) {
@@ -130,7 +136,8 @@ public class NginxService {
         }
     }
 
-    public String getStatus(String[] cmd) {
+    // nginx status를 호출하고 그 결과를 String으로 반한
+    public String getStatusCmdToString(String[] cmd) {
         StringBuilder sb = new StringBuilder();
         try {
             Process process = Runtime.getRuntime().exec(cmd);
@@ -172,13 +179,12 @@ public class NginxService {
         return sb.toString();
     }
 
+    // nginx config 파일 덮어쓰기
     public boolean reviseConfigFile(String overwrittenConfig) {
-        FileWriter fw = null;
-
         try {
             File file = new File(confPath);
 //            File file = new File("C:\\Users\\MSI\\Desktop\\nginx\\nginx_config.txt");
-            fw = new FileWriter(file, false);
+            FileWriter fw = new FileWriter(file, false);
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(overwrittenConfig);
             bw.flush();
@@ -189,8 +195,4 @@ public class NginxService {
         return true;
     }
 
-    public static void main(String[] args) {
-
-        NginxService nginxService = new NginxService();
-        MonitoringStatus status = nginxService.status();}
 }
