@@ -4,9 +4,9 @@ server:
 nginx:
   path:
     service: $CRUZ_ROOT/nginx/local/nginx/sbin/nginx
-    conf: $CRUZ_ROOT/nginx/local/nginx/conf/nginx.conf
+    conf: /home/cruzorcl/cruzlink/nginx/local/nginx/conf/nginx.conf
   cmd:
     status: curl localhost:8880/nginx_status
   log:
     path:
-      status: $CRUZ_ROOT/nginx/nginx_api/log/nginx_status.log
+      status: /home/cruzorcl/cruzlink/nginx/nginx_api/logs/nginx_status.log

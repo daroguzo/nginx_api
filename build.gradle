@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'kr.co.direa'
-version = '0.3'
+version = '0.5'
 sourceCompatibility = '1.8'
 
 configurations {
