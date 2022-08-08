@@ -15,22 +15,21 @@ public class LogService {
     private String logPath;
 
     // json 형태의 nginx status 파일 쓰기
-    public boolean writeLog(String status) {
-        boolean result = false;
+    public void writeLog(String status) {
 
         try {
             File file = new File(logPath);
+//            File file = new File("C:\\Users\\MSI\\Desktop\\nginx\\logs\\nginx_status.log");
             FileWriter fw = new FileWriter(file, true);
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(status);
             bw.newLine();
             bw.flush();
+            bw.close();
 
-            result = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return result;
     }
 }

@@ -99,7 +99,7 @@ public class NginxService {
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
-        if (statusNumbers.length == 6) {
+        if (statusNumbers.length != 7) {
             return MonitoringStatus.builder()
                     .isOk(false)
                     .date(date)
@@ -164,14 +164,14 @@ public class NginxService {
         try {
             File file = new File(confPath);
 //            File file = new File("C:\\Users\\MSI\\Desktop\\nginx\\nginx_config.txt");
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufReader = new BufferedReader(fileReader);
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
 
             String line = "";
-            while ((line = bufReader.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 sb.append(line).append("\n");
             }
-            bufReader.close();
+            br.close();
 
         } catch (IOException e) {
             e.printStackTrace();

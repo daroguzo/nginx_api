@@ -26,4 +26,5 @@ public class MonitoringStatus {
     private long writing;
 
     private long waiting;
+
 }
