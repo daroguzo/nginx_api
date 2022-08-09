@@ -3,6 +3,7 @@ package kr.co.direa.nginx_api.controller;
 import kr.co.direa.nginx_api.service.NginxService;
 import kr.co.direa.nginx_api.vo.MonitoringStatus;
 import kr.co.direa.nginx_api.vo.NginxStatus;
+import kr.co.direa.nginx_api.vo.NodeInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,9 +46,9 @@ public class NginxRestController {
         return nginxService.status();
     }
 
-//    @GetMapping("/test")
-//    public String test() {
-//        return nginxService.getStatusCmd();
-//    }
+    @GetMapping("/monitoring")
+    public NodeInfo monitoring() {
+        return nginxService.getNodeInfo();
+    }
 
 }

@@ -2,6 +2,8 @@ package kr.co.direa.nginx_api.service;
 
 import kr.co.direa.nginx_api.vo.MonitoringStatus;
 import kr.co.direa.nginx_api.vo.NginxStatus;
+import kr.co.direa.nginx_api.vo.NodeInfo;
+import kr.co.direa.nginx_api.vo.OpenPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,10 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Service
@@ -24,6 +30,9 @@ public class NginxService {
 
     @Value("${nginx.path.conf}")
     private String confPath;
+
+    @Value("${nginx.cmd.info}")
+    private String infoCmd;
 
     // nginx 기동 커맨드 실행
     public NginxStatus start() {
@@ -85,7 +94,7 @@ public class NginxService {
                 statusCmd
         };
 
-        String rawStatus = getStatusCmdToString(cmd);
+        String rawStatus = getCmdToString(cmd);
 
         // STATUS EXAMPLE
 //        String rawStatus = "Active connections: 541 \n" +
@@ -121,7 +130,66 @@ public class NginxService {
                 .build();
 
         // 로그 파일로 쓰기
-        logService.writeLog(result.toString());
+//        logService.writeLog(result.toString());
+        return result;
+    }
+
+    public NodeInfo getNodeInfo() {
+
+        Set<OpenPort> openPortList = new HashSet<>();
+
+        String[] cmd = {
+                "/bin/sh",
+                "-c",
+                infoCmd
+        };
+
+        String rawNodeInfo = getCmdToString(cmd);
+
+        // STATUS EXAMPLE
+//        String rawNodeInfo = "(Not all processes could be identified, non-owned process info\n" +
+//                " will not be shown, you would have to be root to see it all.)\n" +
+//                "tcp        0      0 0.0.0.0:9090            0.0.0.0:*               LISTEN      26360/nginx: master \n" +
+//                "tcp        0      0 0.0.0.0:8880            0.0.0.0:*               LISTEN      26360/nginx: master \n" +
+//                "tcp        0      0 192.168.1.200:8081      0.0.0.0:*               LISTEN      26360/nginx: master \n" +
+//                "tcp        0      0 0.0.0.0:5050            0.0.0.0:*               LISTEN      26360/nginx: master \n" +
+//                "tcp        0      0 0.0.0.0:5060            0.0.0.0:*               LISTEN      26360/nginx: master \n";
+
+        // 숫자.숫자.숫자.숫자:숫자
+        Pattern pattern = Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{1,5}");
+        Matcher matcher = pattern.matcher(rawNodeInfo);
+
+        String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+        while (matcher.find()) {
+            String[] ipPort = matcher.group().split(":");
+            OpenPort openPort = OpenPort.builder()
+                    .ip(ipPort[0])
+                    .port(Integer.parseInt(ipPort[1]))
+                    .build();
+            openPortList.add(openPort);
+        }
+
+        if (openPortList.isEmpty()) {
+            return NodeInfo.builder()
+                    .isRun(false)
+                    .date(date)
+                    .time(time)
+                    .size(0)
+                    .build();
+        }
+
+        NodeInfo result = NodeInfo.builder()
+                .isRun(true)
+                .date(date)
+                .time(time)
+                .openPortList(openPortList)
+                .size(openPortList.size())
+                .build();
+
+        // 로그 파일로 쓰기
+//        logService.writeLog(result.toString());
         return result;
     }
 
@@ -136,8 +204,8 @@ public class NginxService {
         }
     }
 
-    // nginx status를 호출하고 그 결과를 String으로 반한
-    public String getStatusCmdToString(String[] cmd) {
+    // 매개변수 커맨드를 호출하고 그 결과를 String으로 반한
+    public String getCmdToString(String[] cmd) {
         StringBuilder sb = new StringBuilder();
         try {
             Process process = Runtime.getRuntime().exec(cmd);
@@ -194,5 +262,4 @@ public class NginxService {
         }
         return true;
     }
-
 }
