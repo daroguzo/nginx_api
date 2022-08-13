@@ -130,7 +130,7 @@ public class NginxService {
                 .build();
 
         // 로그 파일로 쓰기
-//        logService.writeLog(result.toString());
+        logService.writeLog(result.toString());
         return result;
     }
 
@@ -180,17 +180,13 @@ public class NginxService {
                     .build();
         }
 
-        NodeInfo result = NodeInfo.builder()
+        return NodeInfo.builder()
                 .isRun(true)
                 .date(date)
                 .time(time)
                 .openPortList(openPortList)
                 .size(openPortList.size())
                 .build();
-
-        // 로그 파일로 쓰기
-//        logService.writeLog(result.toString());
-        return result;
     }
 
     public void execCommand(String[] cmd) {
@@ -204,7 +200,7 @@ public class NginxService {
         }
     }
 
-    // 매개변수 커맨드를 호출하고 그 결과를 String으로 반한
+    // 매개변수 커맨드를 호출하고 그 결과 String 반한
     public String getCmdToString(String[] cmd) {
         StringBuilder sb = new StringBuilder();
         try {
@@ -235,7 +231,7 @@ public class NginxService {
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
 
-            String line = "";
+            String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line).append("\n");
             }
