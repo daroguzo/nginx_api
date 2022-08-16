@@ -258,4 +258,26 @@ public class NginxService {
         }
         return true;
     }
+
+    // 명령어 실행
+    public String postCmd(String cmd) {
+        // 제한된 명령어 find
+        String pattern = "^((?!kill|all|sudo|reboot|su).)*$";
+        if (!Pattern.matches(pattern, cmd)) {
+            return "제한된 명령어가 포함되어 있습니다.(kill/all/sudo/reboot/su)";
+        }
+
+        String[] cmdArray = {
+                "/bin/sh",
+                "-c",
+                cmd
+        };
+
+        String cmdToString = getCmdToString(cmdArray);
+        if (cmd.isEmpty()) {
+            return "결과 값이 없습니다. 명령어를 확인해주세요.";
+        }
+        // 없다면 명령어 실행
+        return cmdToString;
+    }
 }

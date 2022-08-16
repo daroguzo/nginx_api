@@ -6,10 +6,7 @@ import kr.co.direa.nginx_api.vo.NginxStatus;
 import kr.co.direa.nginx_api.vo.NodeInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -49,6 +46,11 @@ public class NginxRestController {
     @GetMapping("/monitoring")
     public NodeInfo monitoring() {
         return nginxService.getNodeInfo();
+    }
+
+    @PostMapping("/cmd")
+    public String postCmd(@RequestBody String cmd) {
+        return nginxService.postCmd(cmd);
     }
 
 }
