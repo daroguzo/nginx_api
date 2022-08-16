@@ -274,7 +274,7 @@ public class NginxService {
         };
 
         String cmdToString = getCmdToString(cmdArray);
-        if (cmd.isEmpty()) {
+        if (cmdToString.isEmpty()) {
             return "결과 값이 없습니다. 명령어를 확인해주세요.";
         }
         // 없다면 명령어 실행
